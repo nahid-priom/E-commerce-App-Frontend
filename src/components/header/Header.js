@@ -1,151 +1,112 @@
-import { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import styles from "./Header.module.scss";
-import { FaShoppingCart, FaTimes, FaUserCircle } from "react-icons/fa";
-import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import ShowOnLogin, { ShowOnLogout } from "../hiddenLink/hiddenLink";
-import { useDispatch, useSelector } from "react-redux";
-import { RESET_AUTH, logout } from "../../redux/features/auth/authSlice";
-import { AdminOnlyLink } from "../adminOnlyRoute/AdminOnlyRoute";
-import { UserName } from "../../pages/profile/Profile";
-import {
-  CALCULATE_TOTAL_QUANTITY,
-  selectCartTotalQuantity,
-} from "../../redux/features/product/cartSlice";
+import React, { useState } from "react";
+import { IoCartOutline, IoCloseOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import { logo, userLogo } from "../../assets";
 
-export const logo = (
-  <div className={styles.logo}>
-    <Link to="/">
-      <h2>
-        Shop<span>Ito</span>.
-      </h2>
-    </Link>
-  </div>
-);
-
-const activeLink = ({ isActive }) => (isActive ? `${styles.active}` : "");
 
 const Header = () => {
-  const [showMenu, setShowMenu] = useState(false);
-  const [scrollPage, setScrollPage] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const cartTotalQuantity = useSelector(selectCartTotalQuantity);
-
-  useEffect(() => {
-    dispatch(CALCULATE_TOTAL_QUANTITY());
-  }, [dispatch]);
-
-  const fixNavbar = () => {
-    if (window.scrollY > 50) {
-      setScrollPage(true);
-    } else {
-      setScrollPage(false);
-    }
-  };
-  window.addEventListener("scroll", fixNavbar);
-
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
-  const hideMenu = () => {
-    setShowMenu(false);
-  };
-
-  const logoutUser = async () => {
-    dispatch(RESET_AUTH());
-    await dispatch(logout());
-    localStorage.setItem("cartItems", JSON.stringify([]));
-    navigate("/login");
-    window.location.reload();
-  };
-
-  const cart = (
-    <span className={styles.cart}>
-      <Link to="/cart">
-        Cart
-        <FaShoppingCart size={20} />
-        <p>{cartTotalQuantity}</p>
-      </Link>
-    </span>
-  );
+  const [isNavOpen, setNavOpen] = useState(false);
 
   return (
-    <header className={scrollPage ? `${styles.fixed}` : null}>
-      <div className={styles.header}>
-        {logo}
-
-        <nav
-          className={
-            showMenu ? `${styles["show-nav"]}` : `${styles["hide-nav"]}`
-          }
-        >
-          <div
-            className={
-              showMenu
-                ? `${styles["nav-wrapper"]} ${styles["show-nav-wrapper"]}`
-                : `${styles["nav-wrapper"]}`
-            }
-            onClick={hideMenu}
-          ></div>
-
-          <ul onClick={hideMenu}>
-            <li className={styles["logo-mobile"]}>
-              {logo}
-              <FaTimes size={22} color="#fff" onClick={hideMenu} />
-            </li>
-            <li>
-              <NavLink to="/shop" className={activeLink}>
+    <div className="sticky top-0 z-50 font-titleFont w-full bg-white border-b-[1px] border-b-gray-800">
+      <div className="max-w-screen-xl mx-auto">
+        {/* Desktop View */}
+        <div className="hidden md:flex items-center justify-between h-20">
+          <Link to="/">
+            <div>
+              <img className="w-40" src={logo} alt="logo" />
+            </div>
+          </Link>
+          <div className="flex items-center gap-8">
+            <ul className="flex items-center gap-8">
+              <li className="text-2xl text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Home
+              </li>
+              <li className="text-2xl text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Pages
+              </li>
+              <li className="text-2xl text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
                 Shop
-              </NavLink>
-            </li>
-            <li>
-              <AdminOnlyLink>
-                <NavLink to="/admin/home" className={activeLink}>
-                  | &nbsp; Admin
-                </NavLink>
-              </AdminOnlyLink>
-            </li>
-          </ul>
-          <div className={styles["header-right"]} onClick={hideMenu}>
-            <span className={styles.links}>
-              <ShowOnLogin>
-                <Link to="/profile">
-                  <FaUserCircle size={16} color="#ff7722" />
-                  <UserName />
-                </Link>
-              </ShowOnLogin>
-              <ShowOnLogout>
-                <NavLink to="/login" className={activeLink}>
-                  Login
-                </NavLink>
-                <NavLink to="/register" className={activeLink}>
-                  Register
-                </NavLink>
-              </ShowOnLogout>
-              <ShowOnLogin>
-                <NavLink to="/order-history" className={activeLink}>
-                  My Orders
-                </NavLink>
-              </ShowOnLogin>
-              <ShowOnLogin>
-                <NavLink to="/" onClick={logoutUser}>
-                  Logout
-                </NavLink>
-              </ShowOnLogin>
-            </span>
-            {cart}
+              </li>
+              <li className="text-2xl text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Element
+              </li>
+              <li className="text-2xl text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Blog
+              </li>
+            </ul>
+            <Link>
+              <div className="relative flex justify-end items-start">
+                <IoCartOutline size={22} className=" cursor-pointer" />
+                <span className="bg-orange-800 absolute w-4 left-6 top-[-8px] text-white rounded-full text-sm flex justify-center items-center font-semibold">
+                  0
+                </span>
+              </div>
+            </Link>
+            <div className="flex items-center justify-center">
+              <img
+                className="w-8 h-8 rounded-full mr-2"
+                src={userLogo}
+                alt="user logo"
+              />
+              <text className="text-xl">Nahid Ferdous Priom</text>
+            </div>
           </div>
-        </nav>
-
-        <div className={styles["menu-icon"]}>
-          {cart}
-          <HiOutlineMenuAlt3 size={28} onClick={toggleMenu} />
         </div>
+
+        {/* Mobile and Tablet View */}
+        <div className="md:hidden flex items-center justify-between h-20">
+          <Link to="/">
+            <div>
+              <img className="w-32" src={logo} alt="logo" />
+            </div>
+          </Link>
+          <div className="flex items-center">
+            <div
+              className="cursor-pointer"
+              onClick={() => setNavOpen(!isNavOpen)}
+            >
+              {isNavOpen ? (
+                // Cross icon when navigation links are open
+                <IoCloseOutline className="w-6 h-6 text-black" />
+              ) : (
+                // Burger icon when navigation links are closed
+                <div>
+                  <div className="w-6 h-1 bg-black"></div>
+                  <div className="w-6 h-1 bg-black mt-1"></div>
+                  <div className="w-6 h-1 bg-black mt-1"></div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Drawer */}
+        {isNavOpen && (
+          <div className="md:hidden absolute top-20 left-0 w-full bg-white">
+            {/* Include your navigation links here */}
+            {/* Example: */}
+            <ul className="p-4">
+              <li className="text-base text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Home
+              </li>
+              <li className="text-base text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Pages
+              </li>
+              <li className="text-base text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Shop
+              </li>
+              <li className="text-base text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Element
+              </li>
+              <li className="text-base text-black font-bold hover:text-orange-700 hover:underline underline-offset-2 decoration-[1px] cursor-pointer duration-300">
+                Blog
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
-    </header>
+    </div>
   );
 };
 
